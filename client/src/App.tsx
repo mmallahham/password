@@ -85,7 +85,8 @@ export default class App extends Component<AppProps, AppState> {
     if (!this.props.auth.isAuthenticated()) {
       return <LogIn auth={this.props.auth} />
     }
-
+    console.log(this.props);
+    
     return (
       <Switch>
         <Route
@@ -104,7 +105,7 @@ export default class App extends Component<AppProps, AppState> {
           }}
         />
 
-        <Route component={NotFound} />
+        <Route path="*" component={NotFound} />
       </Switch>
     )
   }

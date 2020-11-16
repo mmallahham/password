@@ -62,6 +62,7 @@ export default class Auth {
     this.idToken = authResult.idToken;
     this.expiresAt = expiresAt;
 
+    console.log(this)
     // navigate to the home route
     this.history.replace('/');
   }
@@ -99,6 +100,9 @@ export default class Auth {
     // Check whether the current time is past the
     // access token's expiry time
     let expiresAt = this.expiresAt;
+
+    console.log(new Date().getTime() < expiresAt);
+
     return new Date().getTime() < expiresAt;
   }
 }
