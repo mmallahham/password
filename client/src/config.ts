@@ -4,5 +4,5 @@ export const apiEndpoint = `https://${apiId}.execute-api.eu-west-1.amazonaws.com
 export const authConfig = {
   domain: 'dev-s5id78ab.eu.auth0.com',
   clientId: 'ilwsMeBabDDnjh0q4uvzmmCPHPPFScqy',
-  callbackUrl: 'http://localhost:3000/callback'
+  callbackUrl: 'http://localhost:3001/callback'
 }

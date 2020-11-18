@@ -17,6 +17,7 @@ import {
 import { createTodo, deleteTodo, getTodos, patchTodo } from '../api/todos-api'
 import Auth from '../auth/Auth'
 import { Todo } from '../types/Todo'
+import fileExists from 'file-exists'
 
 interface TodosProps {
   auth: Auth
@@ -160,6 +161,7 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
     return (
       <Grid padded>
         {this.state.todos.map((todo, pos) => {
+          let showImage = this.doesFileExist(String(todo.attachmentUrl));
           return (
             <Grid.Row key={todo.todoId}>
               <Grid.Column width={1} verticalAlign="middle">
@@ -192,7 +194,7 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
                   <Icon name="delete" />
                 </Button>
               </Grid.Column>
-              {todo.attachmentUrl && (
+              {showImage && (
                 <Image src={todo.attachmentUrl} size="small" wrapped />
               )}
               <Grid.Column width={16}>
@@ -210,5 +212,19 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
     date.setDate(date.getDate() + 7)
 
     return dateFormat(date, 'yyyy-mm-dd') as string
+  }
+
+  doesFileExist(urlToFile: string) {
+    var xhr = new XMLHttpRequest();
+    try {
+      xhr.open('HEAD', urlToFile, false);
+      xhr.send();
+    } catch($e) {
+      return false
+    }
+    if (xhr.status >= 400) {
+      return false;
+    }
+    return true;
   }
 }

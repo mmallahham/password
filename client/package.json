@@ -5,6 +5,7 @@
   "dependencies": {
     "-": "0.0.1",
     "@types/dateformat": "^3.0.1",
+    "@types/file-exists": "^4.0.0",
     "@types/immutability-helper": "^2.6.3",
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
@@ -12,6 +13,7 @@
     "auth0-js": "^9.14.0",
     "axios": "^0.21.0",
     "dateformat": "^3.0.3",
+    "file-exists": "^5.0.1",
     "helper": "0.0.13",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
