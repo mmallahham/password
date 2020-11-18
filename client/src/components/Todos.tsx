@@ -17,7 +17,6 @@ import {
 import { createTodo, deleteTodo, getTodos, patchTodo } from '../api/todos-api'
 import Auth from '../auth/Auth'
 import { Todo } from '../types/Todo'
-import fileExists from 'file-exists'
 
 interface TodosProps {
   auth: Auth
