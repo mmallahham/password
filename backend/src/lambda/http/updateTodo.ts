@@ -1,18 +1,12 @@
 import 'source-map-support/register'
-import TodosDB from '../../data/database'
-import { getUserId } from '../utils'
+
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 
-import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
+import { updateTodo } from '../../businessLogic/todos'
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  const todoId = event.pathParameters.todoId
-  const updatedTodo: UpdateTodoRequest = JSON.parse(event.body)
 
-  const userId = getUserId(event);
-  const todoDB = new TodosDB();
-
-  const res = todoDB.updateTodo(todoId, userId, updatedTodo)
+  const res = updateTodo(event);
 
   if (!res) {
     return {

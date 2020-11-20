@@ -1,14 +1,11 @@
 import 'source-map-support/register'
-import TodosDB from '../../data/database'
 
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
-import { getUserId } from '../utils'
+import { getAllTodos } from '../../businessLogic/todos'
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   
-  const userId = getUserId(event);
-  const todoDB = new TodosDB();
-  const items = await todoDB.getAllTodos(userId)
+  const items = await getAllTodos(event)
 
   return {
     statusCode: 200,

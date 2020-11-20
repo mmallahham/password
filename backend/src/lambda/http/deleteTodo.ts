@@ -1,16 +1,10 @@
+import { deleteTodo } from '../../businessLogic/todos';
 import 'source-map-support/register'
-import TodosDB from '../../data/database'
 
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
-import { getUserId } from '../utils'
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  const todoId = event.pathParameters.todoId
-  const userId = getUserId(event);
-
-  const todoDb = new TodosDB();
-
-  if (!(await todoDb.deleteTodo(todoId, userId))) {
+  if (!(await deleteTodo(event))) {
     return {
       statusCode: 404,
       body: JSON.stringify({

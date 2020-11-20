@@ -1,12 +1,12 @@
+import { generateUploadUrl } from '../../businessLogic/todos'
 import 'source-map-support/register'
 
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
-import { getPresignedUploadURL } from '../utils'
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  const todoId = event.pathParameters.todoId
 
-  const presignedUrl: any = getPresignedUploadURL(todoId);
+
+  const presignedUrl: any = generateUploadUrl(event);
 
   if (!presignedUrl) {
     return {

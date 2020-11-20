@@ -1,27 +1,30 @@
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest';
-import { TodoItem } from './../models/TodoItem';
+import { TodoItem } from '../models/TodoItem';
 import * as AWS from 'aws-sdk';
 import * as AWSXRay from 'aws-xray-sdk';
 import { createLogger } from '../utils/logger';
+import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 
 const logger = createLogger("debug");
 const XAWS = AWSXRay.captureAWS(AWS);
-const dynamoClient = new XAWS.DynamoDB.DocumentClient();
-
-const tableName = process.env.TODOS_TABLE;
-const indexName = process.env.INDEX_NAME
 
 export default class TodosDB {
+    constructor(
+        private readonly dynamoClient: DocumentClient = new XAWS.DynamoDB.DocumentClient(),
+        private readonly tableName = process.env.TODOS_TABLE,
+        private readonly indexName = process.env.INDEX_NAME) {
+    }
+    
     async addTodo(todoItem: TodoItem) {
-        await dynamoClient.put({
-            TableName: tableName,
+        await this.dynamoClient.put({
+            TableName: this.tableName,
             Item: todoItem
         }).promise();
     }
   
     async getTodo(todoId: string, userId: string) {
-        const result = await dynamoClient.get({
-            TableName: tableName,
+        const result = await this.dynamoClient.get({
+            TableName: this.tableName,
             Key: {
                 todoId,
                 userId
@@ -32,9 +35,9 @@ export default class TodosDB {
     }
   
     async getAllTodos(userId: string) {
-        const result = await dynamoClient.query({
-            TableName: tableName,
-            IndexName: indexName,
+        const result = await this.dynamoClient.query({
+            TableName: this.tableName,
+            IndexName: this.indexName,
             KeyConditionExpression: 'userId = :userId',
             ExpressionAttributeValues: {
                 ':userId': userId 
@@ -46,8 +49,8 @@ export default class TodosDB {
   
     async updateTodo(todoId: string, userId: string, updatedTodo: UpdateTodoRequest) {
         logger.info('updateTodo');
-        await dynamoClient.update({
-            TableName: tableName,
+        await this.dynamoClient.update({
+            TableName: this.tableName,
             Key: {
                 todoId,
                 userId
@@ -67,8 +70,8 @@ export default class TodosDB {
     }
 
     async deleteTodo(todoId: string, userId: string) {
-        const res = await dynamoClient.delete({
-            TableName: tableName,
+        const res = await this.dynamoClient.delete({
+            TableName: this.tableName,
             Key: {
                 todoId,
                 userId

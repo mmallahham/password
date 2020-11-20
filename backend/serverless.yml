@@ -4,6 +4,8 @@ service:
 plugins:
   - serverless-webpack
   - serverless-iam-roles-per-function
+  - serverless-reqvalidator-plugin
+  - serverless-aws-documentation
 
 provider:
   name: aws
@@ -17,6 +19,24 @@ provider:
     TODOS_TABLE: serverless-todos-table-${self:provider.stage}
     INDEX_NAME: UserIdIndex
     S3_BUCKET: todo-serverless-project-${self:provider.stage}
+
+custom:
+  documentation:
+    api:
+      info:
+        version: v1.0.0
+        title: TODOs API
+        description: Serverless application for managing TODOs
+    models:
+      - 
+        name: CreateTodoRequest
+        contentType: application/json
+        schema: ${file{models/create-todo-reguest.json}}
+      - 
+        name: UpdateTodoRequest
+        contentType: application/json
+        schema: ${file{models/update-todo-request.json}}
+
 
 functions:
 
@@ -49,6 +69,12 @@ functions:
           path: todos
           cors: true
           authorizer: Auth
+          reqvalidatorName: RequstBodyValidator
+          documentation:
+            summary: create new TODO
+            description: create new TODO
+            requestModels: 
+              'application/json': CreateTodoRequest
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -63,6 +89,12 @@ functions:
           path: todos/{todoId}
           cors: true
           authorizer: Auth
+          reqvalidatorName: RequstBodyValidator
+          documentation:
+            summary: Update TODO
+            description: Update TODO
+            requestModels: 
+              'application/json': UpdateTodoRequest
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -102,6 +134,16 @@ functions:
 
 resources:
   Resources:
+    RequstBodyValidator:
+      Type: AWS::ApiGateway::RequestValidator
+      Properties:
+        Name: 'request-body-validator'
+        ValidateRequestBody: true
+        ValidateRequestParameters: false
+        RestApiId:
+          Ref: ApiGatewayRestApi
+
+
     GatewayResponseDefault4XX:
       Type: "AWS::ApiGateway::GatewayResponse"
       Properties:
