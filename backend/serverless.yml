@@ -1,5 +1,5 @@
 service:
-  name: serverless-todo-app
+  name: serverless-password-app
 
 plugins:
   - serverless-webpack
@@ -16,26 +16,48 @@ provider:
 
 
   environment:
-    TODOS_TABLE: serverless-todos-table-${self:provider.stage}
+    LOGINS_TABLE: serverless-login-table-${self:provider.stage}
     INDEX_NAME: UserIdIndex
-    S3_BUCKET: todo-serverless-project-${self:provider.stage}
+    S3_BUCKET: login-serverless-project-${self:provider.stage}
 
 custom:
   documentation:
     api:
       info:
         version: v1.0.0
-        title: TODOs API
-        description: Serverless application for managing TODOs
+        title: Logins API
+        description: Serverless application for managing logins
     models:
       - 
-        name: CreateTodoRequest
+        name: CreateLoginRequest
         contentType: application/json
-        schema: ${file{models/create-todo-reguest.json}}
+        schema:
+          required: 
+            - domainName
+            - userName
+            - password
+          properties:
+            domainName:
+              type: string
+            userName:
+              type: string             
+            password:
+              type: string
       - 
-        name: UpdateTodoRequest
+        name: UpdateLoginRequest
         contentType: application/json
-        schema: ${file{models/update-todo-request.json}}
+        schema:
+          required: 
+            - domainName
+            - userName
+            - password
+          properties:
+            domainName:
+              type: string
+            userName:
+              type: string             
+            password:
+              type: string
 
 
 functions:
@@ -43,71 +65,71 @@ functions:
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
 
-  GetTodos:
-    handler: src/lambda/http/getTodos.handler
+  GetLogins:
+    handler: src/lambda/http/getLogins.handler
     events:
       - http:
           method: get
-          path: todos
+          path: logins
           cors: true
           authorizer: Auth
     iamRoleStatements:
       - Effect: Allow
         Action:
           - dynamodb:Query
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.LOGINS_TABLE}
       - Effect: Allow
         Action:
           - dynamodb:Query
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/UserIdIndex
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.LOGINS_TABLE}/index/UserIdIndex
 
-  CreateTodo:
-    handler: src/lambda/http/createTodo.handler
+  CreateLogin:
+    handler: src/lambda/http/createLogin.handler
     events:
       - http:
           method: post
-          path: todos
+          path: logins
           cors: true
           authorizer: Auth
           reqvalidatorName: RequstBodyValidator
           documentation:
-            summary: create new TODO
-            description: create new TODO
+            summary: create new login
+            description: create new login
             requestModels: 
-              'application/json': CreateTodoRequest
+              'application/json': CreateLoginRequest
     iamRoleStatements:
       - Effect: Allow
         Action:
           - dynamodb:PutItem
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.LOGINS_TABLE}
 
-  UpdateTodo:
-    handler: src/lambda/http/updateTodo.handler
+  UpdateLogin:
+    handler: src/lambda/http/updateLogin.handler
     events:
       - http:
           method: patch
-          path: todos/{todoId}
+          path: logins/{loginId}
           cors: true
           authorizer: Auth
           reqvalidatorName: RequstBodyValidator
           documentation:
-            summary: Update TODO
-            description: Update TODO
+            summary: Update login
+            description: Update login
             requestModels: 
-              'application/json': UpdateTodoRequest
+              'application/json': CreateLoginRequest
     iamRoleStatements:
       - Effect: Allow
         Action:
           - dynamodb:UpdateItem
           - dynamodb:GetItem
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.LOGINS_TABLE}
 
-  DeleteTodo:
-    handler: src/lambda/http/deleteTodo.handler
+  DeleteLogin:
+    handler: src/lambda/http/deleteLogin.handler
     events:
       - http:
           method: delete
-          path: todos/{todoId}
+          path: logins/{loginId}
           cors: true
           authorizer: Auth
     iamRoleStatements:
@@ -115,14 +137,14 @@ functions:
         Action:
           - dynamodb:DeleteItem
           - dynamodb:GetItem
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.LOGINS_TABLE}
 
   GenerateUploadUrl:
     handler: src/lambda/http/generateUploadUrl.handler
     events:
       - http:
           method: post
-          path: todos/{todoId}/attachment
+          path: logins/{loginId}/attachment
           cors: true
           authorizer: Auth
     iamRoleStatements:
@@ -155,7 +177,7 @@ resources:
         RestApiId:
           Ref: "ApiGatewayRestApi"
 
-    TodoTable:
+    LoginTable:
       Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:
@@ -163,15 +185,15 @@ resources:
             AttributeType: S
           - AttributeName: createdAt
             AttributeType: S
-          - AttributeName: todoId
+          - AttributeName: loginId
             AttributeType: S
         KeySchema:
           - AttributeName: userId
             KeyType: HASH
-          - AttributeName: todoId
+          - AttributeName: loginId
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
-        TableName: ${self:provider.environment.TODOS_TABLE}
+        TableName: ${self:provider.environment.LOGINS_TABLE}
         LocalSecondaryIndexes:
           - IndexName: ${self:provider.environment.INDEX_NAME}
             KeySchema:

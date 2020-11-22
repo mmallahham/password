@@ -3,10 +3,11 @@ import { Link, Route, Router, Switch } from 'react-router-dom'
 import { Grid, Menu, Segment } from 'semantic-ui-react'
 
 import Auth from './auth/Auth'
-import { EditTodo } from './components/EditTodo'
+import logo from './password.png';
+import { EditLogin } from './components/EditLogin'
 import { LogIn } from './components/LogIn'
 import { NotFound } from './components/NotFound'
-import { Todos } from './components/Todos'
+import { Logins } from './components/Logins'
 
 export interface AppProps {}
 
@@ -35,14 +36,23 @@ export default class App extends Component<AppProps, AppState> {
 
   render() {
     return (
-      <div>
-        <Segment style={{ padding: '8em 0em' }} vertical>
-          <Grid container stackable verticalAlign="middle">
+      <div className="App-header">
+        <Segment style={{ padding: '1em 0em' }} vertical>
+          <Grid container stackable verticalAlign="middle" horizantalAlign="middle">
+            <Grid.Row>
+              <Grid.Column width={7}></Grid.Column>
+              <Grid.Column width={2}><img src={logo} className="App-logo" alt="logo" /></Grid.Column>
+              <Grid.Column width={7}></Grid.Column>
+            </Grid.Row>
+            <Grid.Row>
+              <Grid.Column width={6}></Grid.Column>
+              <Grid.Column width={4}><h1>Password Manager</h1></Grid.Column>
+              <Grid.Column width={6}></Grid.Column>
+            </Grid.Row>
             <Grid.Row>
               <Grid.Column width={16}>
                 <Router history={this.props.history}>
                   {this.generateMenu()}
-
                   {this.generateCurrentPage()}
                 </Router>
               </Grid.Column>
@@ -90,16 +100,16 @@ export default class App extends Component<AppProps, AppState> {
       <Switch>
         <Route
           exact
-          path="/todos/:todoId/edit"
+          path="/logins/:loginId/edit"
           render={props => {
-            return <EditTodo {...props} auth={this.props.auth} />
+            return <EditLogin {...props} auth={this.props.auth} />
           }}
         />
         <Route
           exact
           path="/"
           render={props => {
-            return <Todos {...props} auth={this.props.auth} />
+            return <Logins {...props} auth={this.props.auth} />
           }}
         />
 

@@ -1,7 +1,7 @@
 {
-  "name": "serverless-todo-app",
+  "name": "serverless-logins-app",
   "version": "1.0.0",
-  "description": "Serverless TODO image app",
+  "description": "Serverless logins app",
   "dependencies": {
     "aws-xray-sdk": "^3.2.0",
     "jsonwebtoken": "^8.5.1",

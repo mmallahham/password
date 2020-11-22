@@ -1,4 +1,4 @@
-import { generateUploadUrl } from '../../businessLogic/todos'
+import { generateUploadUrl } from '../../businessLogic/logins'
 import 'source-map-support/register'
 
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
@@ -6,8 +6,8 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } f
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 
 
-  const presignedUrl: any = generateUploadUrl(event);
-
+  const presignedUrl: any = await generateUploadUrl(event);
+  
   if (!presignedUrl) {
     return {
       statusCode: 404,
