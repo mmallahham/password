@@ -178,7 +178,6 @@ export class Logins extends React.PureComponent<LoginsProps, LoginsState> {
       <Grid padded>
         {this.state.logins.map((login, pos) => {
           let showImage = this.doesFileExist(String(login.attachmentUrl));
-          console.log(showImage);
           
           return (
             <Grid.Row key={login.loginId}>
@@ -232,16 +231,18 @@ export class Logins extends React.PureComponent<LoginsProps, LoginsState> {
   }
   
   doesFileExist(urlToFile: string) {
-    var xhr = new XMLHttpRequest();
-    try {
-      xhr.open('Head', urlToFile, true);
-      xhr.send();
-    } catch($e) {
-      return false
-    }
-    if (xhr.status >= 400) {
-      return false;
-    }
+    // var xhr = new XMLHttpRequest();
+    // try {
+    //   xhr.open('Head', urlToFile, false);
+    //   xhr.send();
+    // } catch($e) {
+    //   return false
+    // }
+    // if (xhr.status >= 400) {
+    //   return false;
+    // }
+    // console.log(xhr.status);
+    
     return true;
   }
 }
